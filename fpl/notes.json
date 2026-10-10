@@ -1,0 +1,18 @@
+{
+  "_how_to_use": "Real-life knowledge the numbers can't see yet. Every entry needs a reason and is printed in the audit. Keys starting with _ are ignored.",
+  "players": {
+    "_Example Player": {
+      "availability": {"7": 0.0, "8": 0.6, "9": 1.0},
+      "start_prob": 0.9,
+      "xgi_mult": 1.1,
+      "reason": "Out GW7 (hamstring, manager presser 9 Oct); moved into the number 10 role in training"
+    }
+  },
+  "teams": {
+    "_XXX": {
+      "attack_mult": 0.95,
+      "defence_mult": 1.05,
+      "reason": "Manager sacked; caretaker reverting to a back four"
+    }
+  }
+}
