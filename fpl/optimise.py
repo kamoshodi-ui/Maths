@@ -30,6 +30,7 @@ class PlanSettings:
     banned: tuple[int, ...] = ()
     locked: tuple[int, ...] = ()
     freeze_first: bool = False  # forbid transfers in the first gameweek (the 'roll' baseline)
+    first_gw_transfers: int | None = None  # force exactly this many transfers in the first gameweek
 
 
 def _candidates(players: list[dict], owned: set[int], n: int) -> list[dict]:
@@ -96,6 +97,8 @@ def plan(players: list[dict], state, gws: list[int], s: PlanSettings, proj_key: 
         n_tr = pulp.lpSum(tin[i][t] for i in ids)
         if k == 0 and s.freeze_first:
             prob += n_tr == 0
+        if k == 0 and s.first_gw_transfers is not None:
+            prob += n_tr == s.first_gw_transfers
         next_ft = ft[T[k + 1]] if k + 1 < len(T) else ft_end
         if k == 0:
             prob += ft[t] == state.free_transfers

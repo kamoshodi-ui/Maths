@@ -6,6 +6,7 @@ Understat is used to cross-check them and to flag over/under-performance.
 from __future__ import annotations
 
 import codecs
+import difflib
 import json
 import re
 import unicodedata
@@ -36,6 +37,20 @@ TEAM_ALIASES = {
 def _fold(s: str) -> str:
     s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().lower()
     return re.sub(r"[^a-z ]", "", s.replace("-", " ")).strip()
+
+
+def fpl_team_id(title: str, fpl_teams: list[dict]) -> int | None:
+    """Understat team title -> FPL team id (aliases, then exact, then prefix match: 'Hull' ~ 'Hull City')."""
+    name = TEAM_ALIASES.get(title, title)
+    for t in fpl_teams:
+        if t["name"] == name:
+            return t["id"]
+    f = _fold(name)
+    for t in fpl_teams:
+        g = _fold(t["name"])
+        if g == f or g.startswith(f + " ") or f.startswith(g + " "):
+            return t["id"]
+    return None
 
 
 def _embedded(html: str, var: str):
@@ -69,12 +84,9 @@ def fetch_league(season: int, cache_dir: Path, offline: bool = False) -> dict:
 
 def team_table(us: dict, fpl_teams: list[dict]) -> dict[int, dict]:
     """Per FPL team id: games, npxG, npxGA, xG, xGA, goals, conceded (season totals)."""
-    by_name = {t["name"]: t["id"] for t in fpl_teams}
-    folded = {_fold(t["name"]): t["id"] for t in fpl_teams}
     out = {}
     for t in us["teams"].values():
-        title = t["title"]
-        fid = by_name.get(TEAM_ALIASES.get(title, title)) or folded.get(_fold(title))
+        fid = fpl_team_id(t["title"], fpl_teams)
         if fid is None:
             continue
         h = t["history"]
@@ -86,37 +98,38 @@ def team_table(us: dict, fpl_teams: list[dict]) -> dict[int, dict]:
             "npxGA": sum(float(x["npxGA"]) for x in h),
             "goals": sum(int(x["scored"]) for x in h),
             "conceded": sum(int(x["missed"]) for x in h),
+            "pts": sum(int(x["pts"]) for x in h),
+            "xpts": sum(float(x["xpts"]) for x in h),
         }
     return out
 
 
 def match_players(us: dict, elements: list[dict], fpl_teams: list[dict]) -> dict[int, dict]:
-    """Map FPL element id -> Understat player row, by team plus folded name."""
-    team_of = {}
-    for t in fpl_teams:
-        team_of[t["name"]] = t["id"]
+    """Map FPL element id -> Understat player row, by club plus name (exact, token, then fuzzy)."""
     by_team: dict[int, list[dict]] = {}
     for p in us["players"]:
         last_team = p["team_title"].split(",")[-1].strip()  # transferred players list several clubs
-        fid = team_of.get(TEAM_ALIASES.get(last_team, last_team))
-        if fid is None:
-            fid = next((t["id"] for t in fpl_teams if _fold(t["name"]) == _fold(last_team)), None)
+        fid = fpl_team_id(last_team, fpl_teams)
         if fid is not None:
             by_team.setdefault(fid, []).append(p)
     out = {}
     for el in elements:
         cands = by_team.get(el["team"], [])
         full = _fold(f'{el["first_name"]} {el["second_name"]}')
-        web = _fold(el["web_name"])
-        best = None
+        web = _fold(el["web_name"].split(".")[-1])
+        best, best_score = None, 0.0
         for p in cands:
             un = _fold(p["player_name"])
+            toks = un.split()
             if un == full:
-                best = p
-                break
-            toks = set(un.split())
-            if web in toks or (web and web in un) or toks <= set(full.split()):
-                best = best or p
-        if best:
+                score = 1.0
+            elif web and (web in toks or web == un or set(toks) <= set(full.split())):
+                score = 0.9
+            else:
+                score = max(difflib.SequenceMatcher(None, un, full).ratio(),
+                            max((difflib.SequenceMatcher(None, web, t).ratio() for t in toks), default=0) - 0.05)
+            if score > best_score:
+                best, best_score = p, score
+        if best is not None and best_score >= 0.8:
             out[el["id"]] = best
     return out

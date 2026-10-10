@@ -90,18 +90,30 @@ def team_rates(boot: dict, fixtures: list[dict], understat: dict[int, dict] | No
     dvals = list(obs_def.values()) or vals
     davg = sum(dvals) / len(dvals)
 
-    # Prior from FPL's own team strength ratings (pre-season real-world view).
-    def s(t, k):
-        return (t[f"strength_{k}_home"] + t[f"strength_{k}_away"]) / 2
+    # Prior from FPL's own team strength ratings (pre-season real-world view). FPL sometimes
+    # publishes only the coarse overall rating (2-5) with the attack/defence splits zeroed.
+    detailed = all(t.get("strength_attack_home") and t.get("strength_defence_home") for t in teams)
 
-    mean_att = sum(s(t, "attack") for t in teams) / len(teams)
-    mean_def = sum(s(t, "defence") for t in teams) / len(teams)
+    def rating(t):
+        return (t.get("strength_overall_home") or 3) + (t.get("strength_overall_away") or 3)
+
+    mean_r = sum(rating(t) for t in teams) / len(teams)
+
+    def prior(t):
+        if detailed:
+            sa = (t["strength_attack_home"] + t["strength_attack_away"]) / 2
+            sd = (t["strength_defence_home"] + t["strength_defence_away"]) / 2
+            ma = sum((x["strength_attack_home"] + x["strength_attack_away"]) / 2 for x in teams) / len(teams)
+            md = sum((x["strength_defence_home"] + x["strength_defence_away"]) / 2 for x in teams) / len(teams)
+            return avg * sa / ma, davg * md / sd
+        # each overall-rating step (summed home+away) ~ 10% more goals scored and 10% fewer conceded
+        step = rating(t) - mean_r
+        return avg * math.exp(0.1 * step), davg * math.exp(-0.1 * step)
 
     attack, defence = {}, {}
     for t in teams:
         tid, g = t["id"], played[t["id"]]
-        prior_a = avg * s(t, "attack") / mean_att
-        prior_d = davg * mean_def / s(t, "defence")
+        prior_a, prior_d = prior(t)
         k = TEAM_PRIOR_GAMES
         attack[tid] = (g * obs_att.get(tid, prior_a) + k * prior_a) / (g + k)
         defence[tid] = (g * obs_def.get(tid, prior_d) + k * prior_d) / (g + k)

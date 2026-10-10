@@ -64,13 +64,25 @@ def audit(args) -> Path:
 
     players, rates, log = project(boot, fixtures, st.next_gw, args.horizon, us_teams, notes)
 
+    avoid = {t["id"] for t in boot["teams"] if t["short_name"] in {x.upper() for x in args.avoid_teams}}
+    owned_ids = set(st.ids)
+    banned = resolve(boot, args.ban) + tuple(e["id"] for e in boot["elements"] if e["team"] in avoid and e["id"] not in owned_ids)
     settings = PlanSettings(
-        wildcard_gw=args.wildcard, banned=resolve(boot, args.ban), locked=resolve(boot, args.lock),
+        wildcard_gw=args.wildcard, banned=banned, locked=resolve(boot, args.lock),
         hit_cost=4.0, ft_value=args.ft_value,
     )
     best = plan(players, st, gws, settings)
     hold = plan(players, st, gws, replace(settings, freeze_first=True))
     gain = best["objective"] - hold["objective"]
+    by_count = [(0, hold, 0.0)]
+    for n in range(1, min(st.free_transfers, 5) + 1):
+        if n == len(best["gws"][0]["in"]) and not best["gws"][0]["hits"]:
+            r = best
+        else:
+            r = plan(players, st, gws, replace(settings, first_gw_transfers=n))
+        by_count.append((n, r, r["objective"] - hold["objective"]))
+    # Don't churn: take the fewest moves that get within 0.5 pts of the best plan.
+    _, best, gain = next((c for c in by_count if c[2] >= gain - 0.5), (None, best, gain))
     stab = stability(players, st, gws, settings, runs=args.stability) if args.stability else None
 
     last_gw = st.next_gw - 1
@@ -80,10 +92,11 @@ def audit(args) -> Path:
     next_event = next(e for e in boot["events"] if e["id"] == st.next_gw)
     ctx = {
         "state": st, "players": players, "plan": best, "gws": gws, "gain": gain, "stability": stab,
+        "by_count": by_count, "avoided": sorted(t["short_name"] for t in boot["teams"] if t["id"] in avoid),
         "elite": elite, "leagues": leagues, "rates": rates, "log": log, "settings": settings,
         "teams": boot["teams"], "team_short": {t["id"]: t["short_name"] for t in boot["teams"]},
         "fixtures": fixtures_by_team(fixtures, gws), "deadline": next_event["deadline_time"].replace("T", " ").replace("Z", " UTC"),
-        "understat_ok": us_ok, "understat_players": us_players,
+        "understat_ok": us_ok, "understat_players": us_players, "understat_teams": us_teams,
         "source": f"cached data in {args.offline}" if args.offline else "live FPL data",
     }
     out_dir = HERE / "reports"
@@ -104,6 +117,7 @@ def main(argv=None):
     a.add_argument("--wildcard", type=int, help="plan with a Wildcard played in this gameweek")
     a.add_argument("--ban", nargs="*", default=[], help="players never to buy (web names)")
     a.add_argument("--lock", nargs="*", default=[], help="players never to sell (web names)")
+    a.add_argument("--avoid-teams", nargs="*", default=[], help="clubs never to buy from (short names, e.g. COV TOT)")
     a.add_argument("--ft-value", type=float, default=1.5, help="points value of a banked free transfer")
     a.add_argument("--stability", type=int, default=12, help="perturbed re-runs for confidence (0 to skip)")
     a.add_argument("--elite", type=int, default=50, help="top-N overall managers to compare (0 to skip)")

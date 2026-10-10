@@ -45,20 +45,20 @@ def mini_leagues(client, team_id: int, gw: int, top: int = 10, max_size: int = 5
     entry = client.entry(team_id)
     out = []
     for lg in entry.get("leagues", {}).get("classic", []):
-        if lg.get("league_type") != "x":  # skip public/system leagues
+        if lg.get("league_type") != "x" or (lg.get("rank_count") or 0) > max_size:  # skip public and huge leagues
             continue
         st = client.league(lg["id"])
         results = st["standings"]["results"]
-        if not results or len(results) > max_size:
+        if not results:
             continue
         me = next((r for r in results if r["entry"] == team_id), None)
         leaders = [r for r in results[:top] if r["entry"] != team_id]
         out.append({
             "name": lg["name"], "id": lg["id"],
             "my_rank": me["rank"] if me else lg.get("entry_rank"),
-            "my_total": me["total"] if me else None,
+            "my_total": me["total"] if me else entry.get("summary_overall_points"),
             "leader_total": results[0]["total"], "leader_name": results[0]["player_name"],
-            "size": len(results),
+            "size": lg.get("rank_count") or len(results),
             "leaders": [{"name": r["player_name"], "team": r["entry_name"], "total": r["total"], "rank": r["rank"]} for r in leaders],
             "own": ownership(client, [r["entry"] for r in leaders], gw),
         })

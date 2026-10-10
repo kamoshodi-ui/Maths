@@ -86,6 +86,19 @@ def render(ctx: dict) -> str:
     else:
         w(f"**Roll the transfer.** No move beats banking it over {horizon}. "
           f"You go into GW{gws[1] if len(gws) > 1 else '?'} with {plan['gws'][1]['ft'] if len(plan['gws']) > 1 else st.free_transfers + 1} free transfers.")
+    if ctx.get("by_count"):
+        w("")
+        w("**How many transfers?** The best plan for each number of moves this week, against rolling. "
+          "The verdict takes the fewest moves that get within 0.5 pts of the best.")
+        w("")
+        w("| Moves | This week | Gain over " + horizon + " |")
+        w("|---|---|---|")
+        for n, r, g in ctx["by_count"]:
+            mv = "; ".join(f"{byid[o]['name']} → {byid[i]['name']}" for o, i in _pair(r["gws"][0]["out"], r["gws"][0]["in"], byid)) or "roll"
+            w(f"| {n} | {mv} | {g:+.1f} |")
+    if ctx.get("avoided"):
+        w("")
+        w(f"*Not buying from: {', '.join(ctx['avoided'])} (your choice, via --avoid-teams).*")
     if stab:
         w("")
         w(f"*Confidence = how many of {stab['runs']} re-runs, each with every projection randomly shaken by ±25%, "
@@ -185,7 +198,7 @@ def render(ctx: dict) -> str:
             share = lambda i: own["owners"].get(i, 0) / own["n"]
             threats = sorted((i for i in own["owners"] if i in byid and i not in owned and share(i) >= 0.5),
                              key=lambda i: -byid[i]["total"])[:8]
-            edges = sorted((i for i in owned if share(i) <= 0.3 and byid[i]["total"] >= 8),
+            edges = sorted((i for i in owned if share(i) <= 0.3 and byid[i]["total"] >= 8 and byid[i]["avail_next"] > 0.5),
                            key=lambda i: -byid[i]["total"])[:8]
             rows = [(i, share(i), False) for i in threats] + [(i, share(i), True) for i in edges]
             w(f"Compared with the top {own['n']} rivals:")
@@ -193,9 +206,26 @@ def render(ctx: dict) -> str:
             w("| Player | Rivals owning | You | Proj | What it means |")
             w("|---|---|---|---|---|")
             for i, share, mine in rows:
-                meaning = "your differential — this is where you gain" if mine else "they're all on it — a haul here costs you ground"
+                meaning = "your differential — this is where you gain" if mine else "most leaders own him — his hauls cost you ground"
                 w(f"| {name(i)} | {share:.0%} | {'✓' if mine else '✗'} | {byid[i]['total']:.1f} | {meaning} |")
             w("")
+
+    # ---------------------------------------------------------------- league table
+    ut = ctx.get("understat_teams")
+    if ut:
+        w("## League table: results against underlying numbers (Understat)")
+        w("")
+        w("Points minus expected points shows who is riding luck. A big positive gap usually closes, "
+          "and a big negative one usually recovers. Non-penalty xG difference per game is the best single guide to who is actually good.")
+        w("")
+        w("| # | Team | P | Pts | xPts | Luck | GF–GA | npxG–npxGA per game |")
+        w("|---|---|---|---|---|---|---|---|")
+        rows = sorted(ut.items(), key=lambda kv: (-kv[1]["pts"], -(kv[1]["goals"] - kv[1]["conceded"]), -kv[1]["goals"]))
+        for n, (tid, u) in enumerate(rows, 1):
+            g = max(u["games"], 1)
+            w(f'| {n} | {ctx["team_short"][tid]} | {u["games"]} | {u["pts"]} | {u["xpts"]:.1f} | {u["pts"] - u["xpts"]:+.1f} | '
+              f'{u["goals"]}–{u["conceded"]} | {u["npxG"] / g:.2f}–{u["npxGA"] / g:.2f} ({(u["npxG"] - u["npxGA"]) / g:+.2f}) |')
+        w("")
 
     # ---------------------------------------------------------------- teams
     w("## Team strength and fixtures")
