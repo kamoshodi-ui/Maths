@@ -21,6 +21,8 @@ How a projection is built (all inputs are live FPL data unless noted):
 from __future__ import annotations
 
 import math
+import re
+from datetime import date
 from dataclasses import dataclass, field
 
 POS = {1: "GK", 2: "DEF", 3: "MID", 4: "FWD"}
@@ -119,12 +121,6 @@ def team_rates(boot: dict, fixtures: list[dict], understat: dict[int, dict] | No
         attack[tid] = (g * obs_att.get(tid, prior_a) + k * prior_a) / (g + k)
         defence[tid] = (g * obs_def.get(tid, prior_d) + k * prior_d) / (g + k)
 
-        adj = notes.get("teams", {}).get(t["short_name"])
-        if adj:
-            attack[tid] *= adj.get("attack_mult", 1.0)
-            defence[tid] *= adj.get("defence_mult", 1.0)
-            log.append(f'{t["short_name"]}: attack x{adj.get("attack_mult", 1.0)}, '
-                       f'conceding x{adj.get("defence_mult", 1.0)} — {adj.get("reason", "no reason given")}')
     observed = {tid: {"att": obs_att.get(tid), "def": obs_def.get(tid), "games": played[tid]} for tid in played}
     return TeamRates(attack, defence, avg, davg, observed)
 
@@ -164,22 +160,40 @@ def _fit_price_prior(els: list[dict], key: str) -> dict[int, tuple[float, float]
     return fits
 
 
-def _availability(el: dict, k: int, gw: int, override: dict | None) -> float:
-    """Chance of being available in ``gw``, which is k gameweeks after the next deadline.
+def by_gw(value, gw: int, default: float = 1.0) -> float:
+    """A notes.json value: a number, or {"<gw>": number, ...} where each value holds until the next listed gameweek."""
+    if value is None:
+        return default
+    if not isinstance(value, dict):
+        return float(value)
+    pts = sorted((int(g), float(v)) for g, v in value.items())
+    val = pts[0][1]
+    for g, v in pts:
+        if g <= gw:
+            val = v
+    return val
 
-    A notes.json override is either a single number or {"<gw>": chance, ...};
-    each value holds until the next listed gameweek.
-    """
+
+MONTHS = {m: i for i, m in enumerate(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], 1)}
+
+
+def return_gw(news: str, gw_start: dict[int, date]) -> int | None:
+    """First gameweek a player can play, from FPL news like 'Expected back 1 Nov' or 'Suspended until 7 Nov'."""
+    m = re.search(r"(?:Expected back|Suspended until)\s+(\d{1,2})\s+([A-Z][a-z]{2})", news or "")
+    if not m or m.group(2) not in MONTHS:
+        return None
+    first = min(gw_start.values())
+    month, day = MONTHS[m.group(2)], int(m.group(1))
+    year = first.year if month >= first.month else first.year + 1
+    back = date(year, month, day)
+    later = [g for g, d in gw_start.items() if d >= back]
+    return min(later) if later else max(gw_start) + 1
+
+
+def _availability(el: dict, k: int, gw: int, override: dict | None, gw_start: dict[int, date] | None = None) -> float:
+    """Chance of being available in ``gw``, which is k gameweeks after the next deadline."""
     if override and "availability" in override:
-        av = override["availability"]
-        if not isinstance(av, dict):
-            return float(av)
-        pts = sorted((int(g), float(v)) for g, v in av.items())
-        val = pts[0][1]
-        for g, v in pts:
-            if g <= gw:
-                val = v
-        return val
+        return by_gw(override["availability"], gw)
     status = el.get("status", "a")
     if status == "u":
         return 0.0
@@ -187,8 +201,13 @@ def _availability(el: dict, k: int, gw: int, override: dict | None) -> float:
     if cop is None:
         return 1.0 if status == "a" else 0.5
     cop = cop / 100
+    back = return_gw(el.get("news", ""), gw_start) if gw_start else None
+    if back is not None:  # a dated return or ban: out until then, then a short ramp back to full
+        return cop if gw < back else (0.85 if gw == back and status == "i" else 1.0)
     if status == "s":
         return 0.0 if k == 0 else 1.0
+    if status == "i" and cop == 0:  # injured, no date: a slower return
+        return min(1.0, 0.2 * k)
     return cop + (1 - cop) * min(1.0, k / 3)
 
 
@@ -206,6 +225,20 @@ def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
     prior_xg = _fit_price_prior(els, "expected_goals")
     prior_xa = _fit_price_prior(els, "expected_assists")
     games = {tid: max(o["games"], 1) for tid, o in rates.observed.items()}
+
+    gw_start = {}
+    for ev in boot["events"]:
+        gw_start[ev["id"]] = date.fromisoformat(ev["deadline_time"][:10])
+    team_notes = {t["id"]: notes.get("teams", {}).get(t["short_name"]) for t in boot["teams"]}
+    for t in boot["teams"]:
+        adj = team_notes[t["id"]]
+        if adj:
+            log.append(f'{t["short_name"]}: goals scored x{adj.get("attack_mult", 1.0)}, goals conceded x{adj.get("defence_mult", 1.0)}'
+                       f' — {adj.get("reason", "no reason given")}')
+
+    def tmult(team, key, gw):
+        adj = team_notes.get(team)
+        return by_gw(adj.get(key), gw) if adj else 1.0
 
     by_name = {}
     for e in els:
@@ -255,19 +288,18 @@ def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
         if "recent_start_rate" in h:
             # Weight the last three team games as heavily as the whole season: catches benchings and returns.
             start_rate = 0.5 * start_rate + 0.5 * h["recent_start_rate"]
-        if ov and "start_prob" in ov:
-            start_rate = ov["start_prob"]
+        start_override = ov.get("start_prob") if ov else None
         mins_per_start = min(90.0, max(60.0, mins / e["starts"])) if e["starts"] else 75.0
         f = mins_per_start / 90
         p60 = 0.92 if mins_per_start >= 80 else 0.75
 
         per_gw, nxt = {}, None
         for k, gw in enumerate(gws):
-            av = _availability(e, k, gw, ov)
+            av = _availability(e, k, gw, ov, gw_start)
             total = 0.0
             for opp, home in fx.get(tid, {}).get(gw, []):
-                team_xg = fixture_xg(rates, tid, opp, home)
-                opp_xg = fixture_xg(rates, opp, tid, not home)
+                team_xg = fixture_xg(rates, tid, opp, home) * tmult(tid, "attack_mult", gw) * tmult(opp, "defence_mult", gw)
+                opp_xg = fixture_xg(rates, opp, tid, not home) * tmult(opp, "attack_mult", gw) * tmult(tid, "defence_mult", gw)
                 scale = team_xg / rates.attack[tid]
                 goals = xg90 * scale * f
                 assists = xa90 * scale * f
@@ -282,12 +314,13 @@ def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
                     "bonus": bonus90 * f * (0.7 + 0.3 * scale),
                     "cards": -yc90 * f,
                 }
-                pts = sum(comp.values()) * start_rate * av
+                sr = by_gw(start_override, gw, start_rate) if start_override is not None else start_rate
+                pts = sum(comp.values()) * sr * av
                 total += pts
                 if k == 0 and nxt is None:
                     nxt = {"opp": teams[opp]["short_name"] + (" (H)" if home else " (A)"),
                            "team_xg": team_xg, "opp_xg": opp_xg,
-                           "components": {c: v * start_rate * av for c, v in comp.items()}}
+                           "components": {c: v * sr * av for c, v in comp.items()}}
             per_gw[gw] = total
 
         if ov:
@@ -298,8 +331,9 @@ def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
             "id": e["id"], "name": e["web_name"], "team": teams[tid]["short_name"], "team_id": tid,
             "pos": pos, "pos_name": POS[pos], "price": e["now_cost"],
             "proj": per_gw, "total": sum(per_gw.values()), "next": nxt,
-            "xg90": xg90, "xa90": xa90, "dc90": dc90, "start_rate": start_rate,
-            "avail_next": _availability(e, 0, next_gw, ov), "status": e["status"], "news": e.get("news", ""),
+            "xg90": xg90, "xa90": xa90, "dc90": dc90,
+            "start_rate": by_gw(start_override, next_gw, start_rate) if start_override is not None else start_rate,
+            "avail_next": _availability(e, 0, next_gw, ov, gw_start), "status": e["status"], "news": e.get("news", ""),
             "ownership": float(e["selected_by_percent"]), "points": e["total_points"], "minutes": mins,
             "form": float(e["form"]), "xg": float(e["expected_goals"]), "xa": float(e["expected_assists"]),
             "goals": e["goals_scored"], "assists": e["assists"],

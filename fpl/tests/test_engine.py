@@ -4,8 +4,9 @@ Run from the repository root:  python -m unittest discover -s fpl/tests -t .
 """
 import random
 import unittest
+from datetime import date, timedelta
 
-from fpl.model import project
+from fpl.model import _availability, by_gw, project, return_gw
 from fpl.optimise import SQUAD_SHAPE, PlanSettings, plan
 from fpl.state import build_state, chips_available, derive_free_transfers, sell_price
 
@@ -47,8 +48,9 @@ def make_world(seed=1, played_gws=5, next_gw=6):
         for h, a in zip(order[::2], order[1::2]):
             fixtures.append({"id": fid, "event": gw, "team_h": h, "team_a": a, "finished": gw <= played_gws})
             fid += 1
+    start = date(2026, 8, 21)
     events = [{"id": g, "is_next": g == next_gw, "is_current": g == next_gw - 1,
-               "deadline_time": f"2026-{8 + g // 5:02d}-01T10:00:00Z"} for g in range(1, 39)]
+               "deadline_time": f"{start + timedelta(weeks=g - 1)}T10:00:00Z"} for g in range(1, 39)]
     return {"teams": teams, "elements": elements, "events": events}, fixtures
 
 
@@ -103,6 +105,22 @@ class RulesTest(unittest.TestCase):
         self.assertEqual(derive_free_transfers(hist, {}, 3), 1)
         hist[2]["event_transfers"] = 9  # wildcard week: transfers don't consume FTs
         self.assertEqual(derive_free_transfers(hist, {3: "wildcard"}, 3), 3)
+
+    def test_return_dates_from_news(self):
+        starts = {g: date(2026, 8, 21) + timedelta(weeks=g - 1) for g in range(1, 39)}  # GW11 starts 30 Oct
+        self.assertEqual(return_gw("Hamstring injury - Expected back 1 Nov", starts), 12)
+        self.assertEqual(return_gw("Suspended until 30 Oct", starts), 11)
+        self.assertEqual(return_gw("Expected back 5 Jan", starts), 21)  # rolls into next year
+        self.assertIsNone(return_gw("Thigh injury - Unknown return date", starts))
+        banned = {"status": "s", "chance_of_playing_next_round": 0, "news": "Suspended until 30 Oct"}
+        self.assertEqual([_availability(banned, g - 8, g, None, starts) for g in (8, 10, 11)], [0.0, 0.0, 1.0])
+        long_term = {"status": "i", "chance_of_playing_next_round": 0, "news": "Achilles - Unknown return date"}
+        self.assertLess(_availability(long_term, 2, 10, None, starts), 0.5)  # no quick ramp without a date
+
+    def test_by_gw(self):
+        self.assertEqual(by_gw(None, 7), 1.0)
+        self.assertEqual(by_gw(0.9, 7), 0.9)
+        self.assertEqual([by_gw({"7": 0.8, "9": 1.0}, g) for g in (6, 7, 8, 9, 12)], [0.8, 0.8, 0.8, 1.0, 1.0])
 
     def test_chips_two_sets(self):
         used = [{"name": "wildcard", "event": 6}]
