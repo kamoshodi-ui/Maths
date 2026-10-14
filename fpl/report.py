@@ -140,18 +140,20 @@ def render(ctx: dict) -> str:
     # ---------------------------------------------------------------- squad
     w("## Your fifteen")
     w("")
-    head = "| Player | Pos | Price (sell) | Status | Starts | xG/90 | xA/90 | DefCon/90 | G+A vs xG+xA | Next | " + " | ".join(f"GW{g}" for g in gws) + " | Total | Top-" + (str(elite["n"]) if elite else "N") + " own |"
+    head = "| Player | Pos | Price (sell) | Status | Starts (last 3) | xG/90 | xA/90 | xGI/90 last 4 | DefCon/90 | G+A vs xG+xA | Next | " + " | ".join(f"GW{g}" for g in gws) + " | Total | Top-" + (str(elite["n"]) if elite else "N") + " own |"
     w(head)
     w("|" + "---|" * (head.count("|") - 1))
     for i in sorted(owned, key=lambda i: (byid[i]["pos"], -byid[i]["total"])):
         p = byid[i]
         status = "✅" if p["avail_next"] >= 0.99 else f'⚠️ {p["avail_next"]:.0%} {p["news"]}'
         nxt = p["next"]["opp"] if p["next"] else "blank"
-        w(f'| {p["name"]} ({p["team"]}) | {p["pos_name"]} | {m(p["price"])} ({m(owned[i]["sell"])}) | {status} | {p["start_rate"]:.0%} | '
-          f'{p["xg90"]:.2f} | {p["xa90"]:.2f} | {p["dc90"]:.1f} | {_perf(p, us.get(i))} | {nxt} | '
+        w(f'| {p["name"]} ({p["team"]}) | {p["pos_name"]} | {m(p["price"])} ({m(owned[i]["sell"])}) | {status} | {p["start_rate"]:.0%}{_recent(p)} | '
+          f'{p["xg90"]:.2f} | {p["xa90"]:.2f} | {_form(p)} | {p["dc90"]:.1f} | {_perf(p, us.get(i))} | {nxt} | '
           + " | ".join(f'{p["proj"].get(g, 0):.1f}' for g in gws) + f' | **{p["total"]:.1f}** | {eo(i)} |')
     w("")
-    w("*G+A vs xG+xA: positive = scoring above chances (likely to cool), negative = owed. Understat where matched, else FPL/Opta.*")
+    w("*Starts: model start chance (season and last three games weighted equally), with actual starts in the last three in brackets. "
+      "xGI/90 last 4: Understat xG+xA per 90 over his last four league games — compare with the season xG/90 + xA/90 to see who's heating up or cooling off. "
+      "G+A vs xG+xA: positive = scoring above chances (likely to cool), negative = owed. Understat where matched, else FPL/Opta.*")
     w("")
 
     # ---------------------------------------------------------------- alternatives
@@ -163,11 +165,11 @@ def render(ctx: dict) -> str:
                       key=lambda p: -p["total"])[:8]
         w(f"**{label}**")
         w("")
-        w("| Player | Price | Proj | Pts/£m | xG/90 | xA/90 | DefCon/90 | Next | Top own | Owned |")
-        w("|---|---|---|---|---|---|---|---|---|---|")
+        w("| Player | Price | Proj | Pts/£m | xG/90 | xA/90 | xGI/90 last 4 | Starts (last 3) | DefCon/90 | Next | Top own | Owned |")
+        w("|---|---|---|---|---|---|---|---|---|---|---|---|")
         for p in pool:
             w(f'| {p["name"]} ({p["team"]}) | {m(p["price"])} | {p["total"]:.1f} | {p["total"] / (p["price"] / 10):.2f} | '
-              f'{p["xg90"]:.2f} | {p["xa90"]:.2f} | {p["dc90"]:.1f} | {p["next"]["opp"] if p["next"] else "blank"} | {eo(p["id"])} | '
+              f'{p["xg90"]:.2f} | {p["xa90"]:.2f} | {_form(p)} | {p["start_rate"]:.0%}{_recent(p)} | {p["dc90"]:.1f} | {p["next"]["opp"] if p["next"] else "blank"} | {eo(p["id"])} | '
               f'{"✓" if p["id"] in owned else ""} |')
         w("")
 
@@ -261,6 +263,16 @@ def render(ctx: dict) -> str:
       f"a banked free transfer is worth {ctx['settings'].ft_value} pts; a hit costs {ctx['settings'].hit_cost:g}.")
     w("- Selling prices use the FPL rule (keep half of any rise, rounded down) from your actual purchase prices.")
     return "\n".join(L) + "\n"
+
+
+def _form(p):
+    return f'{p["recent_xgi90"]:.2f}' if p.get("recent_xgi90") is not None else "–"
+
+
+def _recent(p):
+    if p.get("recent_team_games"):
+        return f' ({p["recent_starts"]}/{p["recent_team_games"]})'
+    return ""
 
 
 def _perf(p, u):

@@ -11,6 +11,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from . import elite as elite_mod
+from . import history as history_mod
 from . import understat
 from .api import FPLClient
 from .model import fixtures_by_team, project
@@ -62,7 +63,11 @@ def audit(args) -> Path:
         except Exception as exc:  # report says plainly that Understat was missing
             print(f"Understat unavailable: {exc}", file=sys.stderr)
 
-    players, rates, log = project(boot, fixtures, st.next_gw, args.horizon, us_teams, notes)
+    hist = {}
+    if not args.no_history:
+        season = int(boot["events"][0]["deadline_time"][:4])
+        hist = history_mod.collect(client, boot, fixtures, st.next_gw, us_players, season, offline=bool(args.offline))
+    players, rates, log = project(boot, fixtures, st.next_gw, args.horizon, us_teams, notes, hist)
 
     avoid = {t["id"] for t in boot["teams"] if t["short_name"] in {x.upper() for x in args.avoid_teams}}
     owned_ids = set(st.ids)
@@ -123,6 +128,7 @@ def main(argv=None):
     a.add_argument("--elite", type=int, default=50, help="top-N overall managers to compare (0 to skip)")
     a.add_argument("--no-leagues", dest="leagues", action="store_false", help="skip mini-league comparison")
     a.add_argument("--no-understat", action="store_true")
+    a.add_argument("--no-history", action="store_true", help="skip per-player recent starts / Understat match data (faster)")
     a.add_argument("--notes", default=str(HERE / "notes.json"))
     a.add_argument("--offline", help="replay a cached data folder instead of fetching")
     args = ap.parse_args(argv)

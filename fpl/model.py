@@ -30,6 +30,7 @@ DEFCON_THRESHOLD = {2: 10, 3: 12, 4: 12}
 HOME_ADV = 1.10
 TEAM_PRIOR_GAMES = 6.0
 PLAYER_PRIOR_MINUTES = 540.0
+LAST_SEASON_MIN_MINUTES = 900
 
 
 def poisson_pmf(k: int, lam: float) -> float:
@@ -192,8 +193,10 @@ def _availability(el: dict, k: int, gw: int, override: dict | None) -> float:
 
 
 def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
-            understat_teams: dict[int, dict] | None = None, notes: dict | None = None) -> tuple[list[dict], TeamRates, list[str]]:
+            understat_teams: dict[int, dict] | None = None, notes: dict | None = None,
+            history: dict[int, dict] | None = None) -> tuple[list[dict], TeamRates, list[str]]:
     notes = notes or {}
+    history = history or {}
     log: list[str] = []
     gws = list(range(next_gw, min(next_gw + horizon, 39)))
     rates = team_rates(boot, fixtures, understat_teams, notes, log)
@@ -230,6 +233,11 @@ def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
         m = PLAYER_PRIOR_MINUTES
         p_xg = max(a0 + b0 * price, 0.0)
         p_xa = max(a1 + b1 * price, 0.0)
+        h = history.get(e["id"], {})
+        if h.get("last_mins", 0) >= LAST_SEASON_MIN_MINUTES:
+            # Last season's Understat output is a better starting point than price alone.
+            p_xg = 0.5 * p_xg + 0.5 * h["last_xg90"]
+            p_xa = 0.5 * p_xa + 0.5 * h["last_xa90"]
         xg90 = (float(e["expected_goals"]) + m / 90 * p_xg) / ((mins + m) / 90)
         xa90 = (float(e["expected_assists"]) + m / 90 * p_xa) / ((mins + m) / 90)
         n90 = max(mins / 90, 0.0)
@@ -244,6 +252,9 @@ def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
             xa90 *= mult
 
         start_rate = (e["starts"] + 0.5) / (games.get(tid, 1) + 1)
+        if "recent_start_rate" in h:
+            # Weight the last three team games as heavily as the whole season: catches benchings and returns.
+            start_rate = 0.5 * start_rate + 0.5 * h["recent_start_rate"]
         if ov and "start_prob" in ov:
             start_rate = ov["start_prob"]
         mins_per_start = min(90.0, max(60.0, mins / e["starts"])) if e["starts"] else 75.0
@@ -294,5 +305,7 @@ def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
             "goals": e["goals_scored"], "assists": e["assists"],
             "transfers_in_event": e.get("transfers_in_event", 0), "transfers_out_event": e.get("transfers_out_event", 0),
             "pen_order": e.get("penalties_order"),
+            "recent_xgi90": h.get("recent_xgi90"), "recent_starts": h.get("recent_starts"),
+            "recent_team_games": h.get("recent_team_games"),
         })
     return out, rates, log
