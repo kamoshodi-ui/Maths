@@ -52,7 +52,10 @@ def mini_leagues(client, team_id: int, gw: int, top: int = 10, max_size: int = 5
         if not results:
             continue
         me = next((r for r in results if r["entry"] == team_id), None)
-        leaders = [r for r in results[:top] if r["entry"] != team_id]
+        my_rank = me["rank"] if me else lg.get("entry_rank") or len(results)
+        ahead = [r for r in results if r["entry"] != team_id and r["rank"] < my_rank]
+        # The people you have to pass (closest first); if you lead, the ones chasing you.
+        leaders = sorted(ahead, key=lambda r: -r["rank"])[:top] if ahead else [r for r in results if r["entry"] != team_id][:5]
         out.append({
             "name": lg["name"], "id": lg["id"],
             "my_rank": me["rank"] if me else lg.get("entry_rank"),

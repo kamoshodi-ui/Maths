@@ -198,13 +198,14 @@ def render(ctx: dict) -> str:
         w(f"You are **{lg['my_rank']}** of {lg['size']}" + (f", {gap} pts behind {lg['leader_name']}." if gap else "."))
         w("")
         if own["n"]:
+            after = set(g0["squad"])  # your squad after this week's recommended transfers
             share = lambda i: own["owners"].get(i, 0) / own["n"]
-            threats = sorted((i for i in own["owners"] if i in byid and i not in owned and share(i) >= 0.5),
+            threats = sorted((i for i in own["owners"] if i in byid and i not in after and share(i) >= 0.5),
                              key=lambda i: -byid[i]["total"])[:8]
-            edges = sorted((i for i in owned if share(i) <= 0.3 and byid[i]["total"] >= 8 and byid[i]["avail_next"] > 0.5),
+            edges = sorted((i for i in after if share(i) <= 0.3 and byid[i]["total"] >= 8 and byid[i]["avail_next"] > 0.5),
                            key=lambda i: -byid[i]["total"])[:8]
             rows = [(i, share(i), False) for i in threats] + [(i, share(i), True) for i in edges]
-            w(f"Compared with the top {own['n']} rivals:")
+            w(f"Compared with the {own['n']} rivals {'directly ahead of you' if lg['my_rank'] and lg['my_rank'] > 1 else 'chasing you'}, using your squad after this week's transfers:")
             w("")
             w("| Player | Rivals owning | You | Proj | What it means |")
             w("|---|---|---|---|---|")

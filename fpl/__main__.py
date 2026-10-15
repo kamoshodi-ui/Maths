@@ -94,7 +94,11 @@ def audit(args) -> Path:
     avoid = {t["id"] for t in boot["teams"] if t["short_name"] in {x.upper() for x in args.avoid_teams}}
     owned_ids = set(st.ids)
     banned = resolve(boot, args.ban) + tuple(e["id"] for e in boot["elements"] if e["team"] in avoid and e["id"] not in owned_ids)
-    settings = PlanSettings(
+    prefs = notes.get("preferences", {})
+    club_caps = {t["id"]: n for t in boot["teams"] for k, n in prefs.get("max_per_club", {}).items() if t["short_name"] == k}
+    avoid |= {t["id"] for t in boot["teams"] if t["short_name"] in set(prefs.get("avoid_teams", []))}
+    banned = banned + tuple(e["id"] for e in boot["elements"] if e["team"] in avoid and e["id"] not in owned_ids and e["id"] not in banned)
+    settings = PlanSettings(club_caps=club_caps,
         wildcard_gw=args.wildcard, banned=banned, locked=resolve(boot, args.lock),
         hit_cost=4.0, ft_value=args.ft_value,
     )

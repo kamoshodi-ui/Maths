@@ -1,7 +1,7 @@
 # FPL audit — Definitely In It Now, Gameweek 7
 
-Generated 2026-10-15 05:49 UTC from live FPL data + Understat. Deadline: **2026-10-17 10:00:00 UTC**.
-Overall: 392 pts, rank 2,054,563.
+Generated 2026-10-15 11:09 UTC from live FPL data + Understat. Deadline: **2026-10-17 10:00:00 UTC**.
+Overall: 392 pts, rank 2,054,561.
 
 ## Where you stand (read from the API, not from memory)
 
@@ -35,14 +35,14 @@ Bank after: £0.5m. Free transfers next week: 2.
 
 **XI (4-3-3):** Tzolakis 3.2 · Guéhi 4.7 · De Cuyper 4.3 · Hall 4.3 · Calafiori 4.1 · Saka (V) 4.9 · Groß 4.3 · Rogers 4.1 · Haaland (C) 7.3 · João Pedro 4.4 · Barry 4.2
 
-**Bench:** 1. Janelt 3.7 · 2. Tavernier 3.7 · 3. Gvardiol 2.0 · 4. Dubravka 0.2
+**Bench:** 1. Janelt 3.7 · 2. Tavernier 3.7 · 3. Gvardiol 1.7 · 4. Dubravka 0.2
 
 **Captain Haaland, vice Saka.** Haaland outscores the next-best in your XI (Saka) in 92% of shaken projections. **Triple Captain:** Haaland projects 7.4 this week; his best other weeks before the chip expires are GW11 6.8, GW16 6.7 (later weeks carry more injury and rotation risk) — play it now. Top 50 managers last GW: Haaland captained by 14.
 
 **Provisional plan after this week** (re-run each week; it will change as data does):
 
 - GW8: Gvardiol → Thomas, Tavernier → Mbeumo; captain Haaland
-- GW9: Guéhi → Tarkowski; captain Haaland
+- GW9: roll; captain Haaland
 - GW10: roll; captain Saka
 - GW11: roll; captain Haaland
 - GW12: roll; captain Mbeumo
@@ -56,8 +56,8 @@ Bank after: £0.5m. Free transfers next week: 2.
 | Calafiori (ARS) | DEF | £5.9m (£5.8m) | ✅ | 93% (3/3) | 0.17 | 0.08 | 0.40 | 4.0 | +0.3 | NFO (A) | 4.1 | 3.8 | 3.4 | 4.8 | 4.0 | 3.5 | **23.5** | 47/50 |
 | Guéhi (MCI) | DEF | £6.0m (£6.0m) | ✅ | 93% (3/3) | 0.13 | 0.07 | 0.04 | 5.5 | +0.7 | IPS (H) | 4.7 | 4.1 | 3.6 | 3.3 | 4.4 | 2.9 | **22.9** | 2/50 |
 | De Cuyper (BHA) | DEF | £5.1m (£5.0m) | ✅ | 87% (3/3) | 0.20 | 0.15 | 0.37 | 3.5 | +1.1 | CRY (H) | 4.3 | 3.2 | 2.7 | 3.8 | 4.2 | 4.6 | **22.7** | 46/50 |
-| Hall (NEW) | DEF | £5.3m (£5.3m) | ✅ | 96% (3/3) | 0.05 | 0.11 | 0.11 | 8.7 | +0.9 | AVL (H) | 4.3 | 3.8 | 3.9 | 3.7 | 3.3 | 3.0 | **22.0** | 20/50 |
-| Gvardiol (MCI) | DEF | £5.8m (£5.7m) | ✅ | 40% (2/3) | 0.08 | 0.10 | 0.49 | 6.1 | +1.9 | IPS (H) | 2.0 | 2.6 | 2.3 | 2.1 | 2.8 | 1.9 | **13.8** | 16/50 |
+| Hall (NEW) | DEF | £5.3m (£5.3m) | ✅ | 96% (3/3) | 0.05 | 0.11 | 0.11 | 8.7 | +0.9 | AVL (H) | 4.3 | 3.8 | 3.9 | 3.7 | 3.3 | 3.0 | **22.0** | 19/50 |
+| Gvardiol (MCI) | DEF | £5.8m (£5.7m) | ✅ | 35% (2/3) | 0.08 | 0.10 | 0.49 | 6.1 | +1.9 | IPS (H) | 1.7 | 2.6 | 2.3 | 2.1 | 2.8 | 1.9 | **13.5** | 16/50 |
 | Rogers (CHE) | MID | £7.9m (£7.8m) | ✅ | 96% (3/3) | 0.28 | 0.21 | 0.23 | 7.6 | +1.6 | EVE (A) | 4.1 | 4.6 | 4.2 | 4.1 | 4.3 | 3.7 | **25.1** | 39/50 |
 | Groß (BHA) | MID | £6.0m (£5.9m) | ✅ | 90% (3/3) | 0.23 | 0.17 | 0.93 | 6.0 | +2.2 | CRY (H) | 4.3 | 3.3 | 3.2 | 3.8 | 4.0 | 4.4 | **23.0** | 44/50 |
 | Tavernier (BOU) | MID | £6.1m (£6.1m) | ✅ | 80% (3/3) | 0.27 | 0.17 | 0.67 | 8.5 | -0.2 | SUN (H) | 3.7 | 3.2 | 3.6 | 3.7 | 3.4 | 3.6 | **21.2** | 0/50 |
@@ -76,7 +76,7 @@ Bank after: £0.5m. Free transfers next week: 2.
 | Player | Price | Proj | Pts/£m | xG/90 | xA/90 | xGI/90 last 4 | Starts (last 3) | DefCon/90 | Next | Top own | Owned |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Trafford (LEE) | £5.0m | 21.8 | 4.36 | 0.00 | 0.00 | 0.00 | 96% (3/3) | 0.0 | MUN (H) | 5/50 |  |
-| Raya (ARS) | £6.1m | 20.3 | 3.32 | 0.00 | 0.00 | 0.00 | 96% (3/3) | 0.0 | NFO (A) | 24/50 |  |
+| Raya (ARS) | £6.1m | 20.3 | 3.32 | 0.00 | 0.00 | 0.00 | 96% (3/3) | 0.0 | NFO (A) | 23/50 |  |
 | Donnarumma (MCI) | £5.5m | 19.7 | 3.59 | 0.00 | 0.00 | 0.00 | 96% (3/3) | 0.0 | IPS (H) | 1/50 |  |
 | Tzolakis (HUL) | £4.7m | 19.2 | 4.09 | 0.00 | 0.00 | 0.00 | 96% (3/3) | 0.0 | FUL (A) | 3/50 | ✓ |
 | Leno (FUL) | £4.5m | 18.4 | 4.09 | 0.00 | 0.00 | 0.00 | 96% (3/3) | 0.0 | HUL (H) | 2/50 |  |
@@ -101,10 +101,10 @@ Bank after: £0.5m. Free transfers next week: 2.
 
 | Player | Price | Proj | Pts/£m | xG/90 | xA/90 | xGI/90 last 4 | Starts (last 3) | DefCon/90 | Next | Top own | Owned |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Saka (ARS) | £9.6m | 30.3 | 3.16 | 0.50 | 0.24 | 0.82 | 90% (3/3) | 6.9 | NFO (A) | 4/50 |  |
+| Saka (ARS) | £9.6m | 30.3 | 3.16 | 0.50 | 0.24 | 0.82 | 90% (3/3) | 6.9 | NFO (A) | 5/50 |  |
 | Mbeumo (MUN) | £7.9m | 29.2 | 3.70 | 0.46 | 0.17 | 0.52 | 96% (3/3) | 4.7 | LEE (A) | 11/50 |  |
 | B.Fernandes (MUN) | £11.9m | 27.3 | 2.29 | 0.38 | 0.30 | 0.30 | 90% (3/3) | 5.8 | LEE (A) | 4/50 |  |
-| Gibbs-White (NFO) | £8.0m | 26.8 | 3.36 | 0.29 | 0.24 | 0.82 | 96% (3/3) | 4.8 | ARS (H) | 5/50 |  |
+| Gibbs-White (NFO) | £8.0m | 26.8 | 3.36 | 0.29 | 0.24 | 0.82 | 96% (3/3) | 4.8 | ARS (H) | 4/50 |  |
 | Stach (LEE) | £6.0m | 26.7 | 4.45 | 0.16 | 0.12 | 0.38 | 96% (3/3) | 11.4 | MUN (H) | 1/50 |  |
 | Palmer (CHE) | £9.7m | 25.4 | 2.62 | 0.32 | 0.16 | 0.46 | 96% (3/3) | 6.6 | EVE (A) | 30/50 |  |
 | Dewsbury-Hall (EVE) | £6.6m | 25.4 | 3.85 | 0.20 | 0.17 | 0.75 | 96% (3/3) | 8.7 | CHE (H) | 10/50 |  |
@@ -127,7 +127,7 @@ Bank after: £0.5m. Free transfers next week: 2.
 
 | Player | Owned by | Captained by | You | Proj GW7–12 |
 |---|---|---|---|---|
-| João Pedro (CHE) | 49/50 | 8 | ✓ | 26.9 |
+| João Pedro (CHE) | 49/50 | 9 | ✓ | 26.9 |
 | Haaland (MCI) | 49/50 | 14 | ✓ | 36.5 |
 | Calafiori (ARS) | 47/50 | 0 | ✓ | 23.5 |
 | De Cuyper (BHA) | 46/50 | 1 | ✓ | 22.7 |
@@ -136,89 +136,100 @@ Bank after: £0.5m. Free transfers next week: 2.
 | Palmer (CHE) | 30/50 | 13 | ✗ | 25.4 |
 | Verbruggen (BHA) | 29/50 | 0 | ✗ | 18.4 |
 | Konsa (ARS) | 27/50 | 0 | ✗ | 19.1 |
-| Raya (ARS) | 24/50 | 0 | ✗ | 20.3 |
-| Hall (NEW) | 20/50 | 0 | ✓ | 22.0 |
+| Raya (ARS) | 23/50 | 0 | ✗ | 20.3 |
+| Hall (NEW) | 19/50 | 0 | ✓ | 22.0 |
 | Tarkowski (EVE) | 16/50 | 0 | ✗ | 25.9 |
-| Gvardiol (MCI) | 16/50 | 0 | ✓ | 13.8 |
+| Gvardiol (MCI) | 16/50 | 0 | ✓ | 13.5 |
 | Schade (BRE) | 15/50 | 0 | ✗ | 18.4 |
 | Calvert-Lewin (LEE) | 14/50 | 0 | ✗ | 23.1 |
-| Szoboszlai (LIV) | 12/50 | 1 | ✗ | 12.0 |
+| Szoboszlai (LIV) | 12/50 | 0 | ✗ | 12.0 |
 | Barry (EVE) | 12/50 | 1 | ✗ | 25.4 |
+| Kinsky (TOT) | 11/50 | 0 | ✗ | 16.7 |
 | Mbeumo (MUN) | 11/50 | 1 | ✗ | 29.2 |
-| Kinsky (TOT) | 10/50 | 0 | ✗ | 16.7 |
 | Dewsbury-Hall (EVE) | 10/50 | 0 | ✗ | 25.4 |
 
-**Elite picks you don't have:** Palmer (30/50, model 25.4), Verbruggen (29/50, model 18.4), Konsa (27/50, model 19.1), Raya (24/50, model 20.3). Where the model disagrees with the elite, the table above shows by how much — that's a judgement call, not an automatic move.
+**Elite picks you don't have:** Palmer (30/50, model 25.4), Verbruggen (29/50, model 18.4), Konsa (27/50, model 19.1), Raya (23/50, model 20.3). Where the model disagrees with the elite, the table above shows by how much — that's a judgement call, not an automatic move.
 
 ## Mini-league: Barclays English Premier Yeet
 
 You are **2** of 23, 39 pts behind Jason Marais.
 
-Compared with the top 9 rivals:
+Compared with the 1 rivals directly ahead of you, using your squad after this week's transfers:
 
 | Player | Rivals owning | You | Proj | What it means |
 |---|---|---|---|---|
-| Raya (ARS) | 67% | ✗ | 20.3 | most leaders own him — his hauls cost you ground |
-| Guéhi (MCI) | 11% | ✓ | 22.9 | your differential — this is where you gain |
+| Palmer (CHE) | 100% | ✗ | 25.4 | most leaders own him — his hauls cost you ground |
+| Wissa (NEW) | 100% | ✗ | 21.0 | most leaders own him — his hauls cost you ground |
+| Ødegaard (ARS) | 100% | ✗ | 20.9 | most leaders own him — his hauls cost you ground |
+| Egan (HUL) | 100% | ✗ | 19.5 | most leaders own him — his hauls cost you ground |
+| Konsa (ARS) | 100% | ✗ | 19.1 | most leaders own him — his hauls cost you ground |
+| Verbruggen (BHA) | 100% | ✗ | 18.4 | most leaders own him — his hauls cost you ground |
+| Kinsky (TOT) | 100% | ✗ | 16.7 | most leaders own him — his hauls cost you ground |
+| Szoboszlai (LIV) | 100% | ✗ | 12.0 | most leaders own him — his hauls cost you ground |
+| Saka (ARS) | 0% | ✓ | 30.3 | your differential — this is where you gain |
+| Barry (EVE) | 0% | ✓ | 25.4 | your differential — this is where you gain |
+| Guéhi (MCI) | 0% | ✓ | 22.9 | your differential — this is where you gain |
 | Tavernier (BOU) | 0% | ✓ | 21.2 | your differential — this is where you gain |
-| Ødegaard (ARS) | 22% | ✓ | 20.9 | your differential — this is where you gain |
-| Tzolakis (HUL) | 11% | ✓ | 19.2 | your differential — this is where you gain |
+| Tzolakis (HUL) | 0% | ✓ | 19.2 | your differential — this is where you gain |
 | Janelt (BRE) | 0% | ✓ | 18.9 | your differential — this is where you gain |
+| Gvardiol (MCI) | 0% | ✓ | 13.5 | your differential — this is where you gain |
 
 ## Mini-league: Mono FC Fantasy League
 
 You are **8** of 22, 53 pts behind Daniel O'Sullivan.
 
-Compared with the top 9 rivals:
+Compared with the 7 rivals directly ahead of you, using your squad after this week's transfers:
 
 | Player | Rivals owning | You | Proj | What it means |
 |---|---|---|---|---|
 | Palmer (CHE) | 100% | ✗ | 25.4 | most leaders own him — his hauls cost you ground |
-| Raya (ARS) | 67% | ✗ | 20.3 | most leaders own him — his hauls cost you ground |
-| Szoboszlai (LIV) | 56% | ✗ | 12.0 | most leaders own him — his hauls cost you ground |
-| Guéhi (MCI) | 22% | ✓ | 22.9 | your differential — this is where you gain |
-| Hall (NEW) | 22% | ✓ | 22.0 | your differential — this is where you gain |
+| Raya (ARS) | 57% | ✗ | 20.3 | most leaders own him — his hauls cost you ground |
+| Szoboszlai (LIV) | 71% | ✗ | 12.0 | most leaders own him — his hauls cost you ground |
+| Saka (ARS) | 14% | ✓ | 30.3 | your differential — this is where you gain |
+| Barry (EVE) | 0% | ✓ | 25.4 | your differential — this is where you gain |
+| Guéhi (MCI) | 14% | ✓ | 22.9 | your differential — this is where you gain |
+| Hall (NEW) | 29% | ✓ | 22.0 | your differential — this is where you gain |
 | Tavernier (BOU) | 0% | ✓ | 21.2 | your differential — this is where you gain |
 | Tzolakis (HUL) | 0% | ✓ | 19.2 | your differential — this is where you gain |
 | Janelt (BRE) | 0% | ✓ | 18.9 | your differential — this is where you gain |
-| Gvardiol (MCI) | 11% | ✓ | 13.8 | your differential — this is where you gain |
+| Gvardiol (MCI) | 14% | ✓ | 13.5 | your differential — this is where you gain |
 
 ## Mini-league: TalkingPoints League
 
 You are **35** of 103, 87 pts behind Alex Hopkins.
 
-Compared with the top 10 rivals:
+Compared with the 10 rivals directly ahead of you, using your squad after this week's transfers:
 
 | Player | Rivals owning | You | Proj | What it means |
 |---|---|---|---|---|
-| Palmer (CHE) | 60% | ✗ | 25.4 | most leaders own him — his hauls cost you ground |
-| Konsa (ARS) | 80% | ✗ | 19.1 | most leaders own him — his hauls cost you ground |
-| Verbruggen (BHA) | 60% | ✗ | 18.4 | most leaders own him — his hauls cost you ground |
-| Guéhi (MCI) | 0% | ✓ | 22.9 | your differential — this is where you gain |
-| De Cuyper (BHA) | 30% | ✓ | 22.7 | your differential — this is where you gain |
-| Tavernier (BOU) | 10% | ✓ | 21.2 | your differential — this is where you gain |
-| Ødegaard (ARS) | 30% | ✓ | 20.9 | your differential — this is where you gain |
+| Gibbs-White (NFO) | 50% | ✗ | 26.8 | most leaders own him — his hauls cost you ground |
+| Calvert-Lewin (LEE) | 80% | ✗ | 23.1 | most leaders own him — his hauls cost you ground |
+| Raya (ARS) | 60% | ✗ | 20.3 | most leaders own him — his hauls cost you ground |
+| Barry (EVE) | 10% | ✓ | 25.4 | your differential — this is where you gain |
+| Guéhi (MCI) | 10% | ✓ | 22.9 | your differential — this is where you gain |
+| De Cuyper (BHA) | 20% | ✓ | 22.7 | your differential — this is where you gain |
+| Hall (NEW) | 20% | ✓ | 22.0 | your differential — this is where you gain |
+| Tavernier (BOU) | 0% | ✓ | 21.2 | your differential — this is where you gain |
 | Tzolakis (HUL) | 0% | ✓ | 19.2 | your differential — this is where you gain |
 | Janelt (BRE) | 0% | ✓ | 18.9 | your differential — this is where you gain |
-| Gvardiol (MCI) | 10% | ✓ | 13.8 | your differential — this is where you gain |
 
 ## Mini-league: Footy Masters
 
 You are **18** of 41, 82 pts behind Corné Grönum.
 
-Compared with the top 10 rivals:
+Compared with the 10 rivals directly ahead of you, using your squad after this week's transfers:
 
 | Player | Rivals owning | You | Proj | What it means |
 |---|---|---|---|---|
-| Palmer (CHE) | 60% | ✗ | 25.4 | most leaders own him — his hauls cost you ground |
-| Konsa (ARS) | 60% | ✗ | 19.1 | most leaders own him — his hauls cost you ground |
+| Palmer (CHE) | 50% | ✗ | 25.4 | most leaders own him — his hauls cost you ground |
+| Verbruggen (BHA) | 50% | ✗ | 18.4 | most leaders own him — his hauls cost you ground |
+| Saka (ARS) | 30% | ✓ | 30.3 | your differential — this is where you gain |
+| Barry (EVE) | 30% | ✓ | 25.4 | your differential — this is where you gain |
 | Guéhi (MCI) | 10% | ✓ | 22.9 | your differential — this is where you gain |
-| Hall (NEW) | 20% | ✓ | 22.0 | your differential — this is where you gain |
-| Tavernier (BOU) | 0% | ✓ | 21.2 | your differential — this is where you gain |
-| Ødegaard (ARS) | 20% | ✓ | 20.9 | your differential — this is where you gain |
-| Tzolakis (HUL) | 0% | ✓ | 19.2 | your differential — this is where you gain |
+| Tavernier (BOU) | 20% | ✓ | 21.2 | your differential — this is where you gain |
+| Tzolakis (HUL) | 10% | ✓ | 19.2 | your differential — this is where you gain |
 | Janelt (BRE) | 0% | ✓ | 18.9 | your differential — this is where you gain |
-| Gvardiol (MCI) | 20% | ✓ | 13.8 | your differential — this is where you gain |
+| Gvardiol (MCI) | 30% | ✓ | 13.5 | your differential — this is where you gain |
 
 ## League table: results against underlying numbers (Understat)
 
@@ -297,7 +308,7 @@ Attack = expected goals per game, defence = expected goals conceded per game (mo
 - Isak: availability={'7': 0.1, '8': 0.5, '9': 0.8, '10': 0.9}, start_prob={'7': 0.5, '8': 0.65, '9': 0.85} — Iraola 13 Oct: Isak, Gakpo, Szoboszlai 'not far' but 'none have trained with the group… I don't know if they are going to be ready for Brentford, Villarreal, Brighton'; did not travel to LASK (Sports Mole, Liverpool.com, FFS 13 Oct). Minutes likely managed on return with CL + Carabao Cup.
 - Ekitiké: availability={'7': 0.0, '20': 0.5} — Ruptured Achilles in April; Iraola 11 Sep: 'realistic chance he could help us in January' (SI).
 - Guéhi: start_prob=0.93 — 540/540 minutes; fully fit squad (ReadManCity 14 Oct). Small CL load allowance.
-- Gvardiol: start_prob={'7': 0.4, '8': 0.62} — Benched for O'Reilly at Anfield GW6 (came on 66', assisted); BeatFPL predicted XI v IPS starts O'Reilly (88%), Gvardiol ~22 mins; OneFPL 'hold/monitor'. Genuine left-back rotation.
+- Gvardiol: start_prob={'7': 0.35, '8': 0.62} — Benched for O'Reilly at Anfield GW6 (came on 66', assisted), then played 90 v PSG on 14 Oct; RotoWire, FotMob and BeatFPL predicted XIs v IPS all start O'Reilly at LB (BeatFPL 88%). OneFPL: 'hold/monitor'.
 - Haaland: start_prob=0.94 — Started all six; PSG on Wed 14 Oct then Ipswich three days later — FFS: Maresca 'will be loath to rest anyone', Haaland 'a shoo-in'. Small allowance for CL load.
 - B.Fernandes: start_prob=0.9, xgi_mult=0.9 — Played through pain since September (Jorge Jesus 27 Sep); shuffled to the right flank at Atlético (FFS 14 Oct); 66% of his season xGI came in one game.
 

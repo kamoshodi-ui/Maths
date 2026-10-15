@@ -238,5 +238,12 @@
         1.03
       ]
     }
+  },
+  "preferences": {
+    "max_per_club": {
+      "EVE": 1
+    },
+    "avoid_teams": [],
+    "reason": "Manager's stated rules (Cowork, 19 Aug & 9 Oct): no doubling up on Everton ('I'm not putting two Everton midfielders in my team'); no likely-relegation sides in the XI unless a genuine talisman — checked by hand each week rather than hard-banned, because 'relegation side' changes."
   }
 }

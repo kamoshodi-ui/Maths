@@ -29,6 +29,7 @@ class PlanSettings:
     candidates_per_pos: int = 45
     banned: tuple[int, ...] = ()
     locked: tuple[int, ...] = ()
+    club_caps: dict | None = None  # team_id -> max players (stricter than the game's 3)
     freeze_first: bool = False  # forbid transfers in the first gameweek (the 'roll' baseline)
     first_gw_transfers: int | None = None  # force exactly this many transfers in the first gameweek
 
@@ -92,7 +93,9 @@ def plan(players: list[dict], state, gws: list[int], s: PlanSettings, proj_key: 
         prob += pulp.lpSum(xi[i][t] for i in ids) == 11
         prob += pulp.lpSum(cap[i][t] for i in ids) == 1
         for club in {P[i]["team_id"] for i in ids}:
-            prob += pulp.lpSum(squad[i][t] for i in ids if P[i]["team_id"] == club) <= 3
+            cap_n = (s.club_caps or {}).get(club, 3)
+            already = sum(1 for i in owned if P.get(i, {}).get("team_id") == club)
+            prob += pulp.lpSum(squad[i][t] for i in ids if P[i]["team_id"] == club) <= max(cap_n, already)
 
         n_tr = pulp.lpSum(tin[i][t] for i in ids)
         if k == 0 and s.freeze_first:
