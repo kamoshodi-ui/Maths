@@ -16,6 +16,8 @@ from . import understat
 from .api import FPLClient
 from .model import fixtures_by_team, project
 from .optimise import PlanSettings, plan, stability
+from .report import _pair
+from .robust import check_captain, check_moves
 from .report import render
 from .state import build_state
 
@@ -40,6 +42,26 @@ def resolve(boot: dict, names: list[str]) -> tuple[int, ...]:
             sys.exit(f"Unknown player: {n}")
         ids.append(hit[0])
     return tuple(ids)
+
+
+def tc_window(players, g0, boot, fixtures, st, args) -> str | None:
+    """If Triple Captain is still available, say whether this week's captain is the best use before the chip expires."""
+    if "3xc" not in st.chips_left:
+        return None
+    cap = g0["captain"]
+    last = 19 if st.next_gw <= 19 else 38
+    by = {p["id"]: p for p in players}
+    proj = by[cap]["proj"]
+    if last > max(proj):  # project the captain alone out to the chip deadline
+        notes = load_notes(Path(args.notes))
+        far, _, _ = project(boot, fixtures, st.next_gw, last - st.next_gw + 1, None, notes)
+        proj = next(p for p in far if p["id"] == cap)["proj"]
+    best_gw = max(proj, key=proj.get)
+    now, later = proj[st.next_gw], sorted(((v, g) for g, v in proj.items() if g != st.next_gw), reverse=True)[:2]
+    alt = ", ".join(f"GW{g} {v:.1f}" for v, g in later)
+    verdict = "play it now" if best_gw == st.next_gw else f"wait — GW{best_gw} projects higher"
+    return (f"{by[cap]['name']} projects {now:.1f} this week; his best other weeks before the chip expires are {alt} "
+            f"(later weeks carry more injury and rotation risk) — {verdict}.")
 
 
 def audit(args) -> Path:
@@ -96,6 +118,9 @@ def audit(args) -> Path:
 
     next_event = next(e for e in boot["events"] if e["id"] == st.next_gw)
     ctx = {
+        "move_checks": check_moves(players, st, best["gws"][0], _pair(best["gws"][0]["out"], best["gws"][0]["in"], {p["id"]: p for p in players})),
+        "captain_check": check_captain(players, best["gws"][0]),
+        "tc_window": tc_window(players, best["gws"][0], boot, fixtures, st, args),
         "state": st, "players": players, "plan": best, "gws": gws, "gain": gain, "stability": stab,
         "by_count": by_count, "avoided": sorted(t["short_name"] for t in boot["teams"] if t["id"] in avoid),
         "elite": elite, "leagues": leagues, "rates": rates, "log": log, "settings": settings,
@@ -124,7 +149,7 @@ def main(argv=None):
     a.add_argument("--lock", nargs="*", default=[], help="players never to sell (web names)")
     a.add_argument("--avoid-teams", nargs="*", default=[], help="clubs never to buy from (short names, e.g. COV TOT)")
     a.add_argument("--ft-value", type=float, default=1.5, help="points value of a banked free transfer")
-    a.add_argument("--stability", type=int, default=12, help="perturbed re-runs for confidence (0 to skip)")
+    a.add_argument("--stability", type=int, default=0, help="also run N full re-solves with shaken projections (slow)")
     a.add_argument("--elite", type=int, default=50, help="top-N overall managers to compare (0 to skip)")
     a.add_argument("--no-leagues", dest="leagues", action="store_false", help="skip mini-league comparison")
     a.add_argument("--no-understat", action="store_true")

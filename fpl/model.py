@@ -33,6 +33,7 @@ HOME_ADV = 1.10
 TEAM_PRIOR_GAMES = 6.0
 PLAYER_PRIOR_MINUTES = 540.0
 LAST_SEASON_MIN_MINUTES = 900
+MARKET_WEIGHT = 0.7
 
 
 def poisson_pmf(k: int, lam: float) -> float:
@@ -240,6 +241,28 @@ def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
         adj = team_notes.get(team)
         return by_gw(adj.get(key), gw) if adj else 1.0
 
+    # Bookmaker goal lines for one gameweek: they already price in team news, home/away form and
+    # everything else, so they're blended in (and replace the team multipliers) for those fixtures.
+    market = notes.get("market") or {}
+    market_gw = market.get("gw")
+    market_fx = {tuple(k.split("-")): v for k, v in market.get("fixtures", {}).items()}
+    short = {t["id"]: t["short_name"] for t in boot["teams"]}
+    if market_fx:
+        log.append(f'GW{market_gw}: bookmaker goal lines blended in at {MARKET_WEIGHT:.0%} for {len(market_fx)} fixtures'
+                   f' — {market.get("source", "no source given")}')
+
+    def fixture_goals(tid, opp, home, gw):
+        """(goals for tid, goals for opp) in this fixture."""
+        h, a = (tid, opp) if home else (opp, tid)
+        line = market_fx.get((short[h], short[a])) if gw == market_gw else None
+        for_t = fixture_xg(rates, tid, opp, home)
+        for_o = fixture_xg(rates, opp, tid, not home)
+        if line:
+            mt, mo = (line[0], line[1]) if home else (line[1], line[0])
+            return (MARKET_WEIGHT * mt + (1 - MARKET_WEIGHT) * for_t, MARKET_WEIGHT * mo + (1 - MARKET_WEIGHT) * for_o)
+        return (for_t * tmult(tid, "attack_mult", gw) * tmult(opp, "defence_mult", gw),
+                for_o * tmult(opp, "attack_mult", gw) * tmult(tid, "defence_mult", gw))
+
     by_name = {}
     for e in els:
         by_name.setdefault(e["web_name"].lower(), e["id"])
@@ -298,8 +321,7 @@ def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
             av = _availability(e, k, gw, ov, gw_start)
             total = 0.0
             for opp, home in fx.get(tid, {}).get(gw, []):
-                team_xg = fixture_xg(rates, tid, opp, home) * tmult(tid, "attack_mult", gw) * tmult(opp, "defence_mult", gw)
-                opp_xg = fixture_xg(rates, opp, tid, not home) * tmult(opp, "attack_mult", gw) * tmult(tid, "defence_mult", gw)
+                team_xg, opp_xg = fixture_goals(tid, opp, home, gw)
                 scale = team_xg / rates.attack[tid]
                 goals = xg90 * scale * f
                 assists = xa90 * scale * f
@@ -324,7 +346,7 @@ def project(boot: dict, fixtures: list[dict], next_gw: int, horizon: int,
             per_gw[gw] = total
 
         if ov:
-            log.append(f'{e["web_name"]}: ' + ", ".join(f"{k}={v}" for k, v in ov.items() if k != "reason")
+            log.append(f'{e["web_name"]}: ' + ", ".join(f"{k}={v}" for k, v in ov.items() if k not in ("reason", "name"))
                        + f' — {ov.get("reason", "no reason given")}')
 
         out.append({

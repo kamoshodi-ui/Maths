@@ -1,18 +1,242 @@
 {
-  "_how_to_use": "Real-life knowledge the numbers can't see yet. Every entry needs a reason and is printed in the audit. Keys starting with _ are ignored.",
+  "_how_to_use": "Real-life knowledge the numbers can't see yet. Keys are FPL player ids (names repeat across clubs) or names; team keys are FPL short names. Values are a number or {\"<gw>\": value} (holds until the next listed GW). attack_mult scales a team's goals scored; defence_mult scales goals CONCEDED (above 1 = leakier). Every entry needs a dated reason; keys starting with _ are ignored. Only add what xG can't already see. 'market' = bookmaker expected goals per fixture for one GW, 'HOME-AWAY': [home goals, away goals]; blended in at 70% and replaces team multipliers for those fixtures.",
+  "_updated": "2026-10-14 (GW7 review). Re-check after Thursday/Friday press conferences.",
   "players": {
-    "_Example Player": {
-      "availability": {"7": 0.0, "8": 0.6, "9": 1.0},
+    "379": {
+      "name": "Isak (LIV)",
+      "availability": {
+        "7": 0.1,
+        "8": 0.5,
+        "9": 0.8,
+        "10": 0.9
+      },
+      "start_prob": {
+        "7": 0.5,
+        "8": 0.65,
+        "9": 0.85
+      },
+      "reason": "Iraola 13 Oct: Isak, Gakpo, Szoboszlai 'not far' but 'none have trained with the group… I don't know if they are going to be ready for Brentford, Villarreal, Brighton'; did not travel to LASK (Sports Mole, Liverpool.com, FFS 13 Oct). Minutes likely managed on return with CL + Carabao Cup."
+    },
+    "380": {
+      "name": "Ekitiké (LIV)",
+      "availability": {
+        "7": 0.0,
+        "20": 0.5
+      },
+      "reason": "Ruptured Achilles in April; Iraola 11 Sep: 'realistic chance he could help us in January' (SI)."
+    },
+    "367": {
+      "name": "Gakpo (LIV)",
+      "availability": {
+        "7": 0.15,
+        "8": 0.5,
+        "9": 0.8
+      },
+      "reason": "Ankle; not trained with the group, did not travel to LASK (Iraola 13 Oct)."
+    },
+    "368": {
+      "name": "Szoboszlai (LIV)",
+      "availability": {
+        "7": 0.45,
+        "8": 0.8,
+        "9": 0.95
+      },
+      "reason": "Hamstring 'very small' (Iraola); withdrawn before MCI, not trained, did not travel to LASK."
+    },
+    "391": {
+      "name": "Gvardiol (MCI)",
+      "start_prob": {
+        "7": 0.4,
+        "8": 0.62
+      },
+      "reason": "Benched for O'Reilly at Anfield GW6 (came on 66', assisted); BeatFPL predicted XI v IPS starts O'Reilly (88%), Gvardiol ~22 mins; OneFPL 'hold/monitor'. Genuine left-back rotation."
+    },
+    "8": {
+      "name": "Calafiori (ARS)",
+      "start_prob": {
+        "7": 0.93,
+        "8": 0.85,
+        "9": 0.9
+      },
+      "reason": "Rested v Lille 13 Oct, expected back at Forest (FFS 14 Oct); Hincapié out 'a matter of weeks' removes competition; Bayern away before GW8."
+    },
+    "15": {
+      "name": "Ødegaard (ARS)",
+      "start_prob": {
+        "7": 0.9,
+        "8": 0.8,
+        "9": 0.85
+      },
+      "reason": "Benched v Lille 13 Oct (rested), expected to start at Forest (FFS 14 Oct); subbed 72–86' in 5 of 6; Bayern midweek before GW8."
+    },
+    "12": {
+      "name": "Saka (ARS)",
+      "start_prob": {
+        "7": 0.9,
+        "8": 0.85,
+        "9": 0.9
+      },
+      "reason": "Benched v Lille with illness (Arteta 13 Oct), came on and scored + assisted; FFS expects him to start at Forest; Bayern before GW8."
+    },
+    "124": {
+      "name": "Groß (BHA)",
+      "start_prob": {
+        "7": 0.9,
+        "8": 0.85,
+        "9": 0.88,
+        "10": 0.85,
+        "11": 0.9
+      },
+      "reason": "Brighton in the Conference League on Thursdays before GW7, GW8, GW10 and GW12; he is 35. FFS lists GW7/8/10 as Brighton's biggest rotation risk but expects regulars to be rested in Europe instead."
+    },
+    "115": {
+      "name": "De Cuyper (BHA)",
+      "start_prob": {
+        "7": 0.87,
+        "8": 0.85,
+        "9": 0.88,
+        "10": 0.85,
+        "11": 0.9
+      },
+      "reason": "Same Thursday Conference League turnarounds; FFS 14 Oct: 'wouldn't be a huge surprise if De Cuyper is rested against Zalgiris'. Wing role may end when Mitoma returns (no date yet)."
+    },
+    "68": {
+      "name": "Tavernier (BOU)",
+      "start_prob": 0.8,
+      "reason": "Europa League Thursdays (15 Oct, 22 Oct, 5 Nov); minutes falling 90→72; rated 2/10 in the 5-1 loss; Rose 14 Oct: Kluivert and Adli back in the squad."
+    },
+    "98": {
+      "name": "Janelt (BRE)",
+      "availability": {
+        "7": 1.0,
+        "8": 0.78,
+        "9": 0.82,
+        "10": 0.86,
+        "11": 0.88,
+        "12": 0.9
+      },
+      "reason": "On 4 yellows — the next one brings a one-match ban (FPL scout_risks; FFS 'Suspension Tightrope' 12 Oct). Booked at a high rate, so a missed game somewhere in GW8–12 is likely."
+    },
+    "411": {
+      "name": "Haaland (MCI)",
+      "start_prob": 0.94,
+      "reason": "Started all six; PSG on Wed 14 Oct then Ipswich three days later — FFS: Maresca 'will be loath to rest anyone', Haaland 'a shoo-in'. Small allowance for CL load."
+    },
+    "388": {
+      "name": "Guéhi (MCI)",
+      "start_prob": 0.93,
+      "reason": "540/540 minutes; fully fit squad (ReadManCity 14 Oct). Small CL load allowance."
+    },
+    "165": {
+      "name": "João Pedro (CHE)",
+      "start_prob": 0.92,
+      "reason": "Back from a knee sprain, scored twice in GW6 and came off at ~71'; no European football; Alonso 9 Oct: injured players 'ready to go'."
+    },
+    "249": {
+      "name": "Barry (EVE)",
+      "start_prob": 0.97,
+      "reason": "Everton's only senior centre-forward until January (Beto sold, Balogun deal collapsed — ReadEverton); penalty taker; 90 minutes in each of the last four."
+    },
+    "569": {
+      "name": "Gonzalo (FUL)",
+      "start_prob": {
+        "7": 0.9,
+        "9": 0.78
+      },
+      "reason": "Poor form (Fulhamish 5/10), Muniz pushing; Arbeloa reportedly needs 4 points from HUL and COV (TEAMtalk 12 Oct) — a new manager from GW9 could change the striker."
+    },
+    "426": {
+      "name": "B.Fernandes (MUN)",
       "start_prob": 0.9,
-      "xgi_mult": 1.1,
-      "reason": "Out GW7 (hamstring, manager presser 9 Oct); moved into the number 10 role in training"
+      "xgi_mult": 0.9,
+      "reason": "Played through pain since September (Jorge Jesus 27 Sep); shuffled to the right flank at Atlético (FFS 14 Oct); 66% of his season xGI came in one game."
+    },
+    "94": {
+      "name": "Schade (BRE)",
+      "availability": {
+        "7": 0.5,
+        "8": 0.65,
+        "9": 0.8
+      },
+      "reason": "Shoulder injury at Villa 10 Oct, came off 52'; Andrews 'not totally sure how he is'; no timeline."
     }
   },
   "teams": {
-    "_XXX": {
-      "attack_mult": 0.95,
+    "LIV": {
+      "attack_mult": {
+        "7": 0.85,
+        "8": 0.92,
+        "9": 1.0
+      },
+      "reason": "Isak (41% of Liverpool's xG), Gakpo (30% of their xA) and Szoboszlai (penalties) all out or doubtful; Gravenberch suspended for GW7; 0.76 xG against City without them (Understat)."
+    },
+    "MUN": {
+      "attack_mult": {
+        "7": 0.95,
+        "10": 1.0
+      },
+      "defence_mult": {
+        "7": 1.05,
+        "10": 1.0
+      },
+      "reason": "Winless in five; Sesko out (shin), Dorgu, De Ligt, Ugarte out, Shaw and Mainoo doubts; Martínez row; Carrick favourite for the sack (FFS, Football365 12–14 Oct)."
+    },
+    "AVL": {
+      "defence_mult": {
+        "7": 1.05,
+        "9": 1.0
+      },
+      "reason": "No fit natural left-back (Ruggeri out 'more than one month', Maatsen ankle — Emery 13 Oct); Wednesday-to-Saturday turnarounds before GW7 and GW8."
+    },
+    "NEW": {
       "defence_mult": 1.05,
-      "reason": "Manager sacked; caretaker reverting to a back four"
+      "reason": "Structural: two-striker 4-2-3-1 leaves the midfield light, summer exits (Bruno G, Tonali), error-prone keeper; 18th for xGC (Carragher/Sky, FFS 12–14 Oct). Small extra on top of xGA."
+    }
+  },
+  "market": {
+    "gw": 7,
+    "source": "Spreadex goal lines via Fantasy Football Hub GW7 fixtures article (14 Oct 2026), cross-checked with FFS projected goals (MCI 2.73 v IPS 0.76, NFO 0.93-ish v ARS 1.68)",
+    "fixtures": {
+      "EVE-CHE": [
+        1.48,
+        1.83
+      ],
+      "FUL-HUL": [
+        1.98,
+        1.2
+      ],
+      "NEW-AVL": [
+        1.83,
+        1.57
+      ],
+      "BOU-SUN": [
+        1.72,
+        1.31
+      ],
+      "NFO-ARS": [
+        0.93,
+        1.95
+      ],
+      "MCI-IPS": [
+        2.95,
+        0.94
+      ],
+      "BRE-LIV": [
+        1.81,
+        1.69
+      ],
+      "BHA-CRY": [
+        2.26,
+        1.18
+      ],
+      "LEE-MUN": [
+        1.71,
+        1.64
+      ],
+      "TOT-COV": [
+        2.34,
+        1.03
+      ]
     }
   }
 }

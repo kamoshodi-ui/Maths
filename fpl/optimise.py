@@ -146,9 +146,13 @@ def plan(players: list[dict], state, gws: list[int], s: PlanSettings, proj_key: 
     return out
 
 
-def stability(players: list[dict], state, gws: list[int], s: PlanSettings, runs: int = 12, noise: float = 0.25, seed: int = 7) -> dict:
-    """Re-solve with every projection randomly perturbed (±noise, lognormal) to see
-    which first-gameweek moves survive. A move that only appears in 30% of runs is a coin flip."""
+def stability(players: list[dict], state, gws: list[int], s: PlanSettings, runs: int = 12,
+              player_noise: float = 0.2, week_noise: float = 0.1, seed: int = 7) -> dict:
+    """Re-solve with every projection randomly perturbed, to see which first-gameweek moves survive.
+
+    Most projection error belongs to the player (his rate is wrong in every week), so each run draws one
+    lognormal factor per player (±20%) plus a smaller one per player-week (±10%). A move that only
+    appears in a third of the runs is a coin flip."""
     import random
 
     rng = random.Random(seed)
@@ -158,7 +162,8 @@ def stability(players: list[dict], state, gws: list[int], s: PlanSettings, runs:
         noisy = []
         for p in players:
             q = dict(p)
-            q["noisy"] = {g: v * rng.lognormvariate(0, noise) for g, v in p["proj"].items()}
+            base = rng.lognormvariate(0, player_noise)
+            q["noisy"] = {g: v * base * rng.lognormvariate(0, week_noise) for g, v in p["proj"].items()}
             q["total"] = sum(q["noisy"].values())
             noisy.append(q)
         r = plan(noisy, state, gws, replace(s, candidates_per_pos=min(s.candidates_per_pos, 30)), proj_key="noisy")

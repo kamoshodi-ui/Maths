@@ -206,6 +206,20 @@ class EngineTest(unittest.TestCase):
             self.assertIn(owned[0], g["squad"])
             self.assertNotIn(some_star["id"], g["squad"])
 
+    def test_market_lines_blend(self):
+        fx = next(f for f in self.fixtures if f["event"] == 6)
+        sh = {t["id"]: t["short_name"] for t in self.boot["teams"]}
+        key = f'{sh[fx["team_h"]]}-{sh[fx["team_a"]]}'
+        base, _, _ = project(self.boot, self.fixtures, 6, 1)
+        shut, _, log = project(self.boot, self.fixtures, 6, 1,
+                               notes={"market": {"gw": 6, "source": "test", "fixtures": {key: [8.0, 0.05]}}})
+        b = {p["id"]: p for p in base}
+        h_fwd = [p for p in shut if p["team_id"] == fx["team_h"] and p["pos"] == 4 and p["start_rate"] > 0.5]
+        a_def = [p for p in shut if p["team_id"] == fx["team_a"] and p["pos"] == 2 and p["start_rate"] > 0.5]
+        self.assertTrue(all(p["proj"][6] > b[p["id"]]["proj"][6] for p in h_fwd))  # big home line: home attackers up
+        self.assertTrue(all(p["proj"][6] < b[p["id"]]["proj"][6] for p in a_def))  # away defenders down
+        self.assertTrue(any("bookmaker" in line for line in log))
+
     def test_notes_override(self):
         target = self.players[0]
         notes = {"players": {target["name"]: {"availability": {"6": 0.0, "8": 1.0}, "reason": "test"}}}

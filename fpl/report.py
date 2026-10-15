@@ -71,16 +71,18 @@ def render(ctx: dict) -> str:
             w(f"**This is marginal.** {gain:+.1f} pts over {len(gws)} weeks is inside the noise of any projection. "
               "Rolling the transfer is an equally defensible choice — only make it if the real-life picture agrees.")
         w("")
-        w("| Out | Sell | In | Buy | Proj " + horizon + " out → in | Sell confidence | Buy confidence |")
+        w("| Out | Sell | In | Buy | Proj " + horizon + " out → in | Buy beats sale | Buy beats the next-best options |")
         w("|---|---|---|---|---|---|---|")
-        pairs = _pair(outs, ins, byid)
-        for o, i in pairs:
-            co = ci = "–"
-            if stab:
-                co = f'{stab["moves"].get(("out", o), 0)}/{stab["runs"]}'
-                ci = f'{stab["moves"].get(("in", i), 0)}/{stab["runs"]}'
+        checks = {(c["out"], c["in"]): c for c in ctx.get("move_checks", [])}
+        for o, i in _pair(outs, ins, byid):
+            c = checks.get((o, i))
+            bs = pct(c["beats_sale"]) if c else "–"
+            alts = ", ".join(f'{byid[a]["name"]} {pct(p_)}' for a, p_ in c["alts"]) if c else "–"
             w(f'| {name(o)} | {m(owned[o]["sell"])} | {name(i)} | {m(byid[i]["price"])} | '
-              f'{byid[o]["total"]:.1f} → {byid[i]["total"]:.1f} | {co} | {ci} |')
+              f'{byid[o]["total"]:.1f} → {byid[i]["total"]:.1f} | {bs} | {alts} |')
+        w("")
+        w("*Head-to-head checks: how often the choice still wins if every projection is off by a realistic ±20%. "
+          "Around 50% against an alternative means it's a toss-up: pick on the real-life picture. 75%+ is a clear call.*")
         w("")
         w(f"Bank after: {m(g0['bank'])}. Free transfers next week: {plan['gws'][1]['ft'] if len(plan['gws']) > 1 else '–'}.")
     else:
@@ -101,12 +103,8 @@ def render(ctx: dict) -> str:
         w(f"*Not buying from: {', '.join(ctx['avoided'])} (your choice, via --avoid-teams).*")
     if stab:
         w("")
-        w(f"*Confidence = how many of {stab['runs']} re-runs, each with every projection randomly shaken by ±25%, "
-          f"still make the same sale / the same purchase. A sure sale with an unsure buy means: sell, but the "
-          f"target is one of several near-equal options — the 'best buys' tables show the others.*")
-        roll = stab["moves"].get(("roll",), 0)
-        if roll:
-            w(f"Rolling was the answer in {roll}/{stab['runs']} re-runs.")
+        moves = ", ".join(f'{k[0]} {byid[k[1]]["name"]} {v}/{stab["runs"]}' for k, v in sorted(stab["moves"].items(), key=lambda kv: -kv[1]) if len(k) == 2)
+        w(f"*Full re-solves with shaken projections ({stab['runs']} runs): {moves}; rolled in {stab['moves'].get(('roll',), 0)}.*")
     w("")
 
     # ---------------------------------------------------------------- lineup
@@ -121,9 +119,12 @@ def render(ctx: dict) -> str:
     w("**Bench:** " + " · ".join(f'{n + 1}. {byid[i]["name"]} {byid[i]["proj"].get(g0["gw"], 0):.1f}' for n, i in enumerate(g0["bench"])))
     w("")
     capline = f'**Captain {byid[g0["captain"]]["name"]}, vice {byid[g0["vice"]]["name"]}.**'
-    if stab:
-        tops = sorted(stab["captains"].items(), key=lambda kv: -kv[1])[:3]
-        capline += " Captain across re-runs: " + ", ".join(f'{byid[i]["name"]} {c}/{stab["runs"]}' for i, c in tops) + "."
+    cc = ctx.get("captain_check")
+    if cc:
+        capline += f' {byid[cc["captain"]]["name"]} outscores the next-best in your XI ({byid[cc["rival"]]["name"]}) in {pct(cc["prob"])} of shaken projections.'
+    tc = ctx.get("tc_window")
+    if tc:
+        capline += f' **Triple Captain:** {tc}'
     if elite and elite["captains"]:
         top_cap = max(elite["captains"].items(), key=lambda kv: kv[1])
         capline += f' Top {elite["n"]} managers last GW: {byid[top_cap[0]]["name"]} captained by {top_cap[1]}.'

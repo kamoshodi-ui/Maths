@@ -34,7 +34,7 @@ Useful options:
 1. **Where you stand**: bank, free transfers, selling value and chips left, read from the API.
 2. **The verdict**: either the transfers to make or "roll". Each move shows its projected gain over the
    horizon, net of hits and of the value of a banked transfer. It also shows how often the same move
-   survives 12 re-runs with every projection randomly shaken by ±25%. A move that only survives half
+   survives 12 re-runs with every player's projections randomly shaken (±20% per player, ±10% per week). A move that only survives half
    the time is a coin flip, and the report says so.
 3. **XI, bench order, captain and vice**, plus the provisional plan for the following weeks.
 4. **Your fifteen**: price and sell price, flags, start rate, xG/xA/DefCon per 90, over- or
