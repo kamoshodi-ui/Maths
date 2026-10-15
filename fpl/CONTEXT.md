@@ -5,7 +5,7 @@ Read it before giving advice.
 
 ## The manager
 
-- Team **In The Title Race**, FPL ID **2347384**. A Chelsea supporter who watches every Chelsea game.
+- Team **Definitely In It Now** (was In The Title Race), FPL ID **2347384**. A Chelsea supporter who watches every Chelsea game.
 - Goal: **maximum points, and winning the mini-leagues**. They are chasing first place.
 - Thinks season-long, not one gameweek at a time. Wants to bank transfers and avoid needing a Wildcard.
 
@@ -61,3 +61,10 @@ Read it before giving advice.
   Bournemouth: Alex Scott tendon, out 6–8 weeks.
 - Understat npxG after GW5: Brighton 12.13, Man City 11.04, Man Utd 9.82, Brentford 9.75,
   Chelsea 8.94, Arsenal 8.65, Liverpool 7.48 (13th).
+
+## GW7 review (14–15 Oct 2026) — what was established
+
+- State from the API: bank £0.0m, **3 FTs** (2 kept through Wildcard 1 in GW6, +1), chips left in set 1: TC, BB, FH. GW6 score 70; overall ~2.05m.
+- Research covered FPL API, Understat (player match logs), Opta/The Analyst, FotMob, RotoWire, BeatFPL, FFS, FF Fix, FF Hub, OneFPL, premierleague.com, club sites. FBref blocks automated access (Cloudflare).
+- Consensus: sell Isak (0%, not training as of 13 Oct); Barry is the data and expert pick to replace him (most xG after Haaland, only senior CF at Everton); Saka is the only clear upgrade on Ødegaard; Haaland v IPS is the first-half Triple Captain window; Gvardiol is rotating with O'Reilly.
+- Model fixes made because of this review: return dates parsed from FPL news, per-gameweek team adjustments, bookmaker goal lines blended for the next GW (Forest v Arsenal was badly off on season xG alone), head-to-head robustness checks instead of noisy re-solves.

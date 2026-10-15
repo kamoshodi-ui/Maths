@@ -46,10 +46,10 @@
     "391": {
       "name": "Gvardiol (MCI)",
       "start_prob": {
-        "7": 0.4,
+        "7": 0.35,
         "8": 0.62
       },
-      "reason": "Benched for O'Reilly at Anfield GW6 (came on 66', assisted); BeatFPL predicted XI v IPS starts O'Reilly (88%), Gvardiol ~22 mins; OneFPL 'hold/monitor'. Genuine left-back rotation."
+      "reason": "Benched for O'Reilly at Anfield GW6 (came on 66', assisted), then played 90 v PSG on 14 Oct; RotoWire, FotMob and BeatFPL predicted XIs v IPS all start O'Reilly at LB (BeatFPL 88%). OneFPL: 'hold/monitor'."
     },
     "8": {
       "name": "Calafiori (ARS)",
