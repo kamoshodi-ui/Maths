@@ -68,3 +68,9 @@ Read it before giving advice.
 - Research covered FPL API, Understat (player match logs), Opta/The Analyst, FotMob, RotoWire, BeatFPL, FFS, FF Fix, FF Hub, OneFPL, premierleague.com, club sites. FBref blocks automated access (Cloudflare).
 - Consensus: sell Isak (0%, not training as of 13 Oct); Barry is the data and expert pick to replace him (most xG after Haaland, only senior CF at Everton); Saka is the only clear upgrade on Ødegaard; Haaland v IPS is the first-half Triple Captain window; Gvardiol is rotating with O'Reilly.
 - Model fixes made because of this review: return dates parsed from FPL news, per-gameweek team adjustments, bookmaker goal lines blended for the next GW (Forest v Arsenal was badly off on season xG alone), head-to-head robustness checks instead of noisy re-solves.
+
+## GW7 result (checked 21 Oct 2026)
+
+- Made: Isak → Barry, Ødegaard → Saka (2 FTs, no hit); Triple Captain on Haaland. Scored **73**; total 465; overall rank ~1.67m (up from ~2.05m).
+- Now: bank £0.5m, **2 FTs for GW8**, chips left in set 1: **Bench Boost, Free Hit** (expire at the GW19 deadline). Wildcard 1 (GW6) and TC (GW7) used.
+- GW8 deadline: Fri 23 Oct 17:30 UTC. Engine's provisional GW8 idea was Gvardiol → Thomas (COV) and Tavernier → Mbeumo — check Coventry against the manager's "no relegation sides" rule before suggesting it.
