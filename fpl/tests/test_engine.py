@@ -103,8 +103,18 @@ class RulesTest(unittest.TestCase):
         self.assertEqual(derive_free_transfers(hist, {}, 3), 1)
         hist[2]["event_transfers"] = 3  # a hit doesn't take FTs below zero
         self.assertEqual(derive_free_transfers(hist, {}, 3), 1)
-        hist[2]["event_transfers"] = 9  # wildcard week: transfers don't consume FTs
-        self.assertEqual(derive_free_transfers(hist, {3: "wildcard"}, 3), 3)
+        hist[2]["event_transfers"] = 9  # wildcard week: saved FTs kept, no new one added
+        self.assertEqual(derive_free_transfers(hist, {3: "wildcard"}, 3), 2)
+
+    def test_free_transfers_match_real_history(self):
+        # Team 2347384, 2026/27: transfers per GW, Wildcard in GW6; hits in GW8 and GW11.
+        made = {1: 0, 2: 0, 3: 1, 4: 0, 5: 2, 6: 0, 7: 2, 8: 2, 9: 1, 10: 0, 11: 3}
+        hist = [{"event": g, "event_transfers": n} for g, n in made.items()]
+        self.assertEqual(derive_free_transfers(hist, {6: "wildcard"}, 5), 2)   # GW6: app showed 2
+        self.assertEqual(derive_free_transfers(hist, {6: "wildcard"}, 6), 2)   # GW7: 2, not 3
+        self.assertEqual(derive_free_transfers(hist, {6: "wildcard"}, 7), 1)   # GW8: 2 moves = one -4
+        self.assertEqual(derive_free_transfers(hist, {6: "wildcard"}, 10), 2)  # GW11: 3 moves = one -4
+        self.assertEqual(derive_free_transfers(hist, {6: "wildcard"}, 11), 1)  # GW12
 
     def test_return_dates_from_news(self):
         starts = {g: date(2026, 8, 21) + timedelta(weeks=g - 1) for g in range(1, 39)}  # GW11 starts 30 Oct

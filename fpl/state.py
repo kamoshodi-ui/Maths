@@ -23,14 +23,16 @@ def sell_price(purchase: int, now: int) -> int:
 def derive_free_transfers(history: list[dict], chips_by_gw: dict[int, str], upto_gw: int) -> int:
     """Free transfers available for ``upto_gw + 1``.
 
-    Rules applied: one FT accrues per gameweek, capped at 5; transfers made in a
-    Wildcard or Free Hit week do not consume FTs (saved FTs are kept); GW1 is unlimited.
+    Rules applied: one FT accrues per gameweek, capped at 5; GW1 is unlimited. In a
+    Wildcard or Free Hit week the saved FTs are kept but no new one is added — checked
+    against this team's real history (2 FTs before the GW6 Wildcard, 2 in GW7, and the
+    hits taken in GW8 and GW11 only add up this way).
     """
     made = {h["event"]: h.get("event_transfers", 0) for h in history}
     ft = 1  # entering GW2
     for gw in range(2, upto_gw + 1):
         if chips_by_gw.get(gw) in ("wildcard", "freehit"):
-            ft = min(MAX_FT, ft + 1)
+            continue
         else:
             ft = min(MAX_FT, max(ft - made.get(gw, 0), 0) + 1)
     return ft

@@ -74,3 +74,9 @@ Read it before giving advice.
 - Made: Isak → Barry, Ødegaard → Saka (2 FTs, no hit); Triple Captain on Haaland. Scored **73**; total 465; overall rank ~1.67m (up from ~2.05m).
 - Now: bank £0.5m, **2 FTs for GW8**, chips left in set 1: **Bench Boost, Free Hit** (expire at the GW19 deadline). Wildcard 1 (GW6) and TC (GW7) used.
 - GW8 deadline: Fri 23 Oct 17:30 UTC. Engine's provisional GW8 idea was Gvardiol → Thomas (COV) and Tavernier → Mbeumo — check Coventry against the manager's "no relegation sides" rule before suggesting it.
+
+## Update 23 Nov 2026
+
+- GW8–11 were managed outside these sessions: Saka → Palmer, Janelt → Belloumi (GW8, −4); João Pedro → N. Jackson (GW9); Guéhi → Vušković, Gvardiol → Van Hecke, Barry → Evanilson (GW11, −4). 660 pts, ~1.73m.
+- Fixed the free-transfer rule for Wildcard/Free Hit weeks (saved FTs kept, no new one added). GW7 really had 2 FTs, which is why GW8's two moves cost −4.
+- Full handover, including the Cowork history: `HANDOVER_FOR_GEMINI.md`.
